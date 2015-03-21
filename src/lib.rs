@@ -135,3 +135,21 @@ fn twos_quartered() {
 	assert_eq!(5000, table.get_sum((0,50),(49,99)));
 }
 
+#[test]
+fn first_row() {
+	let src: DMat<usize> = DMat::from_elem(100,50,1);
+	let table = src.calculate_summed_area_table();
+	assert_eq!(50, table.get_sum((0,0),(49,0)));
+}
+
+#[test]
+fn first_col() {
+	let src: DMat<usize> = DMat::from_elem(50,100,1);
+	let table = src.calculate_summed_area_table();
+	assert_eq!(50, table.get_sum((0,0),(0,49)));
+}
+
+
+
+
+
