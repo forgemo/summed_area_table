@@ -1,8 +1,17 @@
 [package]
 
-name = "summed-area-table"
-version = "0.0.1"
-authors = ["Mohammed El Batya"]
+name            = "summed-area-table"
+version         = "0.0.1"
+authors         = ["Mohammed El Batya"]
+description     = "Generic implementation of a summed area table"
+documentation   = "https://github.com/forgemo/summed_area_table/blob/master/README.md"
+homepage        = "https://github.com/forgemo/summed_area_table"
+repository      = "https://github.com/forgemo/summed_area_table"
+readme          = "README.md"
+keywords        = ["summed area", "integral image"]
+license         = "Unlicense"
+
 
 [dependencies]
 nalgebra = "0.2.5"
+
