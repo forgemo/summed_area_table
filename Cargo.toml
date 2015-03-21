@@ -8,7 +8,7 @@ documentation   = "https://github.com/forgemo/summed_area_table/blob/master/READ
 homepage        = "https://github.com/forgemo/summed_area_table"
 repository      = "https://github.com/forgemo/summed_area_table"
 readme          = "README.md"
-keywords        = ["summed area", "integral image"]
+keywords        = ["summed", "integral", "image",  "haar", "face"]
 license         = "Unlicense"
 
 
