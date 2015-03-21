@@ -4,13 +4,21 @@ use nalgebra::{DMat, Zero, Indexable};
 use std::ops::{Add, Sub};
 use std::fmt::{Display};
 
+/// This trait describes the type of values within a summed area table source.
+/// Implementing this trait for your type allows it to become a value within a source.
 pub trait SourceValue<T>: Display + Zero + Clone + Copy + Add<T,Output=T> + Sub<T,Output=T> {
 }
 
+
+/// This trait describes a generic source for a summed area table.
+/// Implementing this trait for your type allows it to become the source for a summed area table calculation.
 pub trait SummedAreaTableSource<T: SourceValue<T>>{
 
+	/// Returns a matrix of source values of type T.
+	/// The calculated summed area table will be based on these values.
 	fn get_values(&self) -> &DMat<T>;
 
+	/// Calculates and returns the summed area table for the source matrix.
 	fn calculate_summed_area_table(&self) -> SummedAreaTable<T>{
 		let vals = self.get_values();
 		let mut table = DMat::new_zeros(vals.nrows(),vals.ncols());
@@ -36,11 +44,17 @@ pub trait SummedAreaTableSource<T: SourceValue<T>>{
 	}
 }
 
+/// This struct is the result of a summed area table calculation.
 pub struct SummedAreaTable<T: SourceValue<T>> {
 	table: DMat<T>,
 }
 
 impl <T: SourceValue<T>>SummedAreaTable<T> {
+
+	/// Returns the sum for a given area.
+	/// That is described by its upper left and lower right point.
+	/// `from` is a x/y coordinate tuple for the upper left point (inclusive)
+	/// `to` is a x/y coordinate tuple for the lower right point (inclusive)
 	fn get_sum(&self, from: (usize,usize), to: (usize,usize)) -> T{
 		let (x1, y1) = from;
 		let (x2, y2) = to;
