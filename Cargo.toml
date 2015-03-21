@@ -2,7 +2,7 @@
 
 name = "summed-area-table"
 version = "0.0.1"
-authors = ["forgemo"]
+authors = ["Mohammed El Batya"]
 
 [dependencies]
 nalgebra = "0.2.5"
