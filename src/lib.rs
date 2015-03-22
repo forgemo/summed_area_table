@@ -1,4 +1,5 @@
 extern crate nalgebra;
+extern crate test;
 
 use nalgebra::{DMat, Zero, Indexable};
 use std::ops::{Add, Sub};
@@ -148,6 +149,34 @@ fn first_col() {
 	let table = src.calculate_summed_area_table();
 	assert_eq!(50, table.get_sum((0,0),(0,49)));
 }
+
+
+#[bench]
+fn large_1k_matrix(b: &mut test::Bencher) {
+	let src: DMat<usize> = DMat::from_elem(1000,1000,1);
+	b.iter(|| {
+		let table = src.calculate_summed_area_table();
+	});
+}
+
+#[bench]
+fn large_2k_matrix(b: &mut test::Bencher) {
+	let src: DMat<usize> = DMat::from_elem(2000,2000,1);
+	b.iter(|| {
+		let table = src.calculate_summed_area_table();
+	})
+}
+
+#[bench]
+fn large_4k_matrix(b: &mut test::Bencher) {
+	let src: DMat<usize> = DMat::from_elem(4000,4000,1);
+	b.iter(|| {
+		let table = src.calculate_summed_area_table();
+	})
+}
+
+
+
 
 
 
