@@ -1,13 +1,17 @@
+#![feature(test)]
+
 extern crate nalgebra;
 extern crate test;
+extern crate num;
 
-use nalgebra::{DMat, Zero, Indexable};
+use num::Zero;
+use nalgebra::{DMat, Indexable};
 use std::ops::{Add, Sub};
 use std::fmt::{Display};
 
 /// This trait describes the type of values within a summed area table source.
 /// Implementing this trait for your type allows it to become a value within a source.
-pub trait SourceValue<T>: Display + Zero + Clone + Copy + Add<T,Output=T> + Sub<T,Output=T> {
+pub trait SourceValue<T>: Display  + Clone + Copy + Zero + Add<T,Output=T> + Sub<T,Output=T> {
 }
 
 
@@ -24,22 +28,25 @@ pub trait SummedAreaTableSource<T: SourceValue<T>>{
 		let vals = self.get_values();
 		let mut table = DMat::new_zeros(vals.nrows(),vals.ncols());
 
+		unsafe {
 		for row in (0 ..vals.nrows()) {
 			for col in (0 ..vals.ncols()) {
-				let mut sum = vals.at((row, col));
+				let mut sum = vals.unsafe_at((row, col));
 
 				if row>0 {
-					sum = sum+ table.at((row-1, col));
+					sum = sum+ table.unsafe_at((row-1, col));
 				}
 				if col>0 {
-					sum = sum+ table.at((row, col-1));
+					sum = sum+ table.unsafe_at((row, col-1));
 				}
 				if row>0 && col>0 {
-					sum = sum - table.at((row-1, col-1));
+					sum = sum - table.unsafe_at((row-1, col-1));
 				}
-				table.set((row,col), sum);
+				table.unsafe_set((row,col), sum);
 			}
 		}
+		}
+
 
 		SummedAreaTable::<T>{table: table}
 	}
@@ -60,18 +67,20 @@ impl <T: SourceValue<T>>SummedAreaTable<T> {
 		let (x1, y1) = from;
 		let (x2, y2) = to;
 
-		let mut sum = self.table.at((x2,y2));
+unsafe {
+		let mut sum = self.table.unsafe_at((x2,y2));
 
 		if x1 > 0 {
-			sum = sum - self.table.at((x1-1,y2));
+			sum = sum - self.table.unsafe_at((x1-1,y2));
 		}
 		if y1 > 0 {
-			sum = sum - self.table.at((x2,y1-1));
+			sum = sum - self.table.unsafe_at((x2,y1-1));
 		}
 		if x1 > 0 && y1 > 0 {
-			sum = sum + self.table.at((x1-1,y1-1));
+			sum = sum + self.table.unsafe_at((x1-1,y1-1));
 		}
 		sum
+	}
 	}
 }
 
