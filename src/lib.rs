@@ -1,7 +1,5 @@
-#![feature(test)]
 
 extern crate nalgebra;
-extern crate test;
 extern crate num;
 
 use num::Zero;
@@ -251,28 +249,4 @@ fn point_order_check3() {
 	let src: DMat<usize> = DMat::new_zeros(50,100);
 	let table = src.calculate_summed_area_table();
 	assert_eq!(0, table.get_sum((49,99),(49,98)));
-}
-
-#[bench]
-fn large_1k_matrix(b: &mut test::Bencher) {
-	let src: DMat<usize> = DMat::from_elem(1000,1000,1);
-	b.iter(|| {
-		src.calculate_summed_area_table();
-	});
-}
-
-#[bench]
-fn large_2k_matrix(b: &mut test::Bencher) {
-	let src: DMat<usize> = DMat::from_elem(2000,2000,1);
-	b.iter(|| {
-		src.calculate_summed_area_table();
-	})
-}
-
-#[bench]
-fn large_4k_matrix(b: &mut test::Bencher) {
-	let src: DMat<usize> = DMat::from_elem(4000,4000,1);
-	b.iter(|| {
-		src.calculate_summed_area_table();
-	})
 }
