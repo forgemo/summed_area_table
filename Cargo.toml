@@ -13,5 +13,5 @@ license         = "Unlicense"
 
 
 [dependencies]
-nalgebra = "0.2.23"
+nalgebra = "0.3.0"
 num = "0.1.27"
