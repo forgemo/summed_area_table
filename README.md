@@ -14,7 +14,7 @@ http://en.wikipedia.org/wiki/Summed_area_table
 ```rust
 [dependencies]
 summed-area-table = "*"
-nalgebra = "0.2.23" // check cargo.toml for dependency for newer version  
+nalgebra = "0.3.0" // check cargo.toml for dependency for newer version  
 ```
 
 #### Import the required content.
@@ -49,7 +49,7 @@ assert_eq!(10, table.get_average((0,0),(4,4)));
 
 ## Custom Data Source
 
-You can implement the `SummedAreaTableSource`trait for your own types if you want them to have the `calculate_summed_area_table()` method. All you need, is to implement `get_values` and return a DMat<usize> for your data. 
+You can implement the `SummedAreaTableSource`trait for your own types if you want them to have the `calculate_summed_area_table()` method. All you need, is to implement `get_values` and return a DMat<usize> for your data.
 
 This is how the library does it for `DMat<usize>` type.
 
