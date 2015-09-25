@@ -14,7 +14,7 @@ http://en.wikipedia.org/wiki/Summed_area_table
 ```rust
 [dependencies]
 summed-area-table = "*"
-nalgebra = "*"
+nalgebra = "0.2.23" // check cargo.toml for dependency for newer version  
 ```
 
 #### Import the required content.
