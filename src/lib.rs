@@ -20,8 +20,8 @@ pub trait SummedAreaTableSource{
 		let (from_x, from_y) = from;
 		let (to_x, to_y) = to;
 		unsafe {
-			for row in (from_y .. to_y+1) {
-				for col in (from_x .. to_x+1) {
+			for row in from_y .. to_y+1 {
+				for col in from_x .. to_x+1 {
 
 					let mut sum = vals.unsafe_at((row, col));
 
