@@ -1,7 +1,7 @@
 [package]
 
 name            = "summed-area-table"
-version         = "0.0.8"
+version         = "0.0.9"
 authors         = ["Mohammed El Batya"]
 description     = "Implementation of a summed area table"
 documentation   = "https://github.com/forgemo/summed_area_table/blob/master/README.md"
@@ -13,5 +13,5 @@ license         = "MIT"
 
 
 [dependencies]
-nalgebra = "0.3.0"
-num = "0.1.27"
+nalgebra = "0.4.0"
+num = "0.1.28"
