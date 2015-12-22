@@ -2,6 +2,8 @@ extern crate nalgebra;
 
 use nalgebra::{DMat};
 
+/// This trait must be implemented for the single values of a summed area table source.
+/// This library contains implementations for all numeric primitive types.
 pub trait SourceValue : Copy {
 	fn as_f64(self) -> f64;
 }
@@ -28,13 +30,20 @@ impl <'a>SourceValue for &'a isize { fn as_f64(self) -> f64 { *self as f64 } }
 impl <'a>SourceValue for &'a f32 { fn as_f64(self) -> f64 { *self as f64 } }
 impl <'a>SourceValue for &'a f64 { fn as_f64(self) -> f64 { *self } }
 
-/// This trait represents the source for a summed area table.
-/// Implement this trait for a type to use it as data source for a summed area table.
+/// Structs implementing this trait can calculate a summed area table for themselves.
+/// This library contains implementations for vec slices and nalgebra::DMat.
 pub trait SummedAreaTableSource<T: SourceValue>{
 
-	/// This method will be used to access the source data in form af a matrix.
+	/// This method will be used to access the source data at given coordinates.
+	/// e.g. luminosity of pixel at (x,y) or value in matrix where x=column and y=row
 	fn at(&self, x:usize, y:usize) -> &T;
+
+	/// The width of the data source
+	/// e.g.: image height or number of matrix rows
 	fn height(&self) -> usize;
+
+	/// The width of the data source
+	/// e.g.: image width or number of matrix columns
 	fn width(&self) -> usize;
 
 	/// Calculates and returns the actual summed area table for a given rect.
@@ -74,7 +83,7 @@ pub trait SummedAreaTableSource<T: SourceValue>{
 	}
 }
 
-/// This struct represents the result of a summed area table calculation.
+/// This struct represents a calculated summed area table.
 pub struct SummedAreaTable {
 	pub table: DMat<f64>,
 }
@@ -183,6 +192,8 @@ impl <T: SourceValue>SummedAreaTableSource<T> for DMat<T>{
 		self.ncols()
 	}
 }
+
+
 pub struct VecSource<'a,T:'a>{
 	vec: &'a [T],
 	height: usize,
