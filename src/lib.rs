@@ -1,6 +1,6 @@
 extern crate nalgebra;
 
-use nalgebra::{DMat};
+use nalgebra::{DMatrix};
 
 /// This trait must be implemented for the single values of a summed area table source.
 /// This library contains implementations for all numeric primitive types.
@@ -49,7 +49,7 @@ pub trait SummedAreaTableSource<T: SourceValue>{
 	/// Calculates and returns the actual summed area table for a given rect.
 	/// The arguments 'from' and 'to' represent the rects top-left (inclusive) and bottom-right (inclusive) point.
 	fn calculate_summed_area_table(&self, from: (usize, usize), to: (usize, usize)) -> SummedAreaTable{
-		let mut table:DMat<f64> = DMat::new_zeros(self.height(),self.width());
+		let mut table:DMatrix<f64> = DMatrix::new_zeros(self.height(),self.width());
 
 		let (from_x, from_y) = from;
 		let (to_x, to_y) = to;
@@ -85,7 +85,7 @@ pub trait SummedAreaTableSource<T: SourceValue>{
 
 /// This struct represents a calculated summed area table.
 pub struct SummedAreaTable {
-	pub table: DMat<f64>,
+	pub table: DMatrix<f64>,
 }
 
 impl SummedAreaTable {
@@ -181,7 +181,7 @@ impl SummedAreaTable {
 
 
 
-impl <T: SourceValue>SummedAreaTableSource<T> for DMat<T>{
+impl <T: SourceValue>SummedAreaTableSource<T> for DMatrix<T>{
 	fn at(&self, x: usize, y: usize) -> &T {
 		&self[(y,x)]
 	}
@@ -218,9 +218,9 @@ impl <'a, T: SourceValue>SummedAreaTableSource<T> for VecSource<'a, T>{
 }
 
 pub mod util {
-	use nalgebra::{DMat};
-	pub fn vec_to_dmat(vec: &Vec<usize>) -> DMat<usize> {
-		DMat::from_col_vec(vec.len(), 1, &vec[..])
+	use nalgebra::{DMatrix};
+	pub fn vec_to_dmat(vec: &Vec<usize>) -> DMatrix<usize> {
+		DMatrix::from_column_vector(vec.len(), 1, &vec[..])
 	}
 	pub fn map_2d_to_1d(x: usize, y: usize, width: usize)->usize{
 	    y * width + x
@@ -230,21 +230,21 @@ pub mod util {
 
 #[test]
 fn zeros() {
-	let src: DMat<usize> = DMat::new_zeros(100,100);
+	let src: DMatrix<usize> = DMatrix::new_zeros(100,100);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(0.0, table.get_sum((0,0),(99,99)));
 }
 
 #[test]
 fn ones() {
-	let src: DMat<usize> = DMat::from_elem(100,100,1);
+	let src: DMatrix<usize> = DMatrix::from_element(100,100,1);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(10000.0, table.get_sum((0,0),(99,99)));
 }
 
 #[test]
 fn ones_without_first_col_row() {
-	let src: DMat<usize> = DMat::from_elem(100,100,1);
+	let src: DMatrix<usize> = DMatrix::from_element(100,100,1);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(10000.0-199.0, table.get_sum((1,1),(99,99)));
 }
@@ -252,42 +252,42 @@ fn ones_without_first_col_row() {
 
 #[test]
 fn twos() {
-	let src: DMat<usize> = DMat::from_elem(100,100,2);
+	let src: DMatrix<usize> = DMatrix::from_element(100,100,2);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(20000.0, table.get_sum((0,0),(99,99)));
 }
 
 #[test]
 fn twos_average() {
-	let src: DMat<usize> = DMat::from_elem(3,3,2);
+	let src: DMatrix<usize> = DMatrix::from_element(3,3,2);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(2.0, table.get_average((0,0),(2,2)));
 }
 
 #[test]
 fn data_count() {
-	let src: DMat<usize> = DMat::from_elem(123,321,2);
+	let src: DMatrix<usize> = DMatrix::from_element(123,321,2);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(123*321, table.get_data_count((0,0),(122,320)));
 }
 
 #[test]
 fn overall_data_count() {
-	let src: DMat<usize> = DMat::from_elem(123,321,2);
+	let src: DMatrix<usize> = DMatrix::from_element(123,321,2);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(123*321, table.get_overall_data_count());
 }
 
 #[test]
 fn overall_sum() {
-	let src: DMat<usize> = DMat::from_elem(100,100,2);
+	let src: DMatrix<usize> = DMatrix::from_element(100,100,2);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(20000.0, table.get_overall_sum());
 }
 
 #[test]
 fn overall_average() {
-	let src: DMat<usize> = DMat::from_elem(3,3,2);
+	let src: DMatrix<usize> = DMatrix::from_element(3,3,2);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(2.0, table.get_overall_average());
 }
@@ -295,7 +295,7 @@ fn overall_average() {
 
 #[test]
 fn ones_quartered() {
-	let src: DMat<usize> = DMat::from_elem(100,100,1);
+	let src: DMatrix<usize> = DMatrix::from_element(100,100,1);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(2500.0, table.get_sum((0,0),(49,49)));
 	assert_eq!(2500.0, table.get_sum((50,50),(99,99)));
@@ -305,8 +305,8 @@ fn ones_quartered() {
 
 #[test]
 fn ones_quartered_vec() {
-	let mat = DMat::from_elem(100,100,1);
-	let src = VecSource::new(mat.as_vec(), 100,100);
+	let mat = DMatrix::from_element(100,100,1);
+	let src = VecSource::new(mat.as_vector(), 100,100);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(2500.0, table.get_sum((0,0),(49,49)));
 	assert_eq!(2500.0, table.get_sum((50,50),(99,99)));
@@ -316,7 +316,7 @@ fn ones_quartered_vec() {
 
 #[test]
 fn twos_quartered() {
-	let src: DMat<usize> = DMat::from_elem(100,100,2);
+	let src: DMatrix<usize> = DMatrix::from_element(100,100,2);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(5000.0, table.get_sum((0,0),(49,49)));
 	assert_eq!(5000.0, table.get_sum((50,50),(99,99)));
@@ -326,21 +326,21 @@ fn twos_quartered() {
 
 #[test]
 fn first_row() {
-	let src: DMat<usize> = DMat::from_elem(10,20,1);
+	let src: DMatrix<usize> = DMatrix::from_element(10,20,1);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(20.0, table.get_sum((0,0),(19,0)));
 }
 
 #[test]
 fn first_col() {
-	let src: DMat<usize> = DMat::from_elem(50,100,1);
+	let src: DMatrix<usize> = DMatrix::from_element(50,100,1);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(50.0, table.get_sum((0,0),(0,49)));
 }
 
 #[test]
 fn from_to_equal() {
-	let src: DMat<usize> = DMat::from_elem(100,100,1);
+	let src: DMatrix<usize> = DMatrix::from_element(100,100,1);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(1.0, table.get_sum((0,0),(0,0)));
 	assert_eq!(1.0, table.get_sum((50,50),(50,50)));
@@ -350,14 +350,14 @@ fn from_to_equal() {
 #[test]
 fn custom() {
 
-	let src: DMat<f64> = DMat::from_row_vec(5,5, &[
+	let src: DMatrix<f64> = DMatrix::from_row_vector(5,5, &[
 		5.0,2.0,3.0,4.0,1.0,
 		1.0,5.0,4.0,2.0,3.0,
 		2.0,2.0,1.0,3.0,4.0,
 		3.0,5.0,6.0,4.0,5.0,
 		4.0,1.0,3.0,2.0,6.0
 	]);
-	let expected_table: DMat<f64> = DMat::from_row_vec(5,5, &[
+	let expected_table: DMatrix<f64> = DMatrix::from_row_vector(5,5, &[
 		5.0,7.0,10.0,14.0,15.0,
 		6.0,13.0,20.0,26.0,30.0,
 		8.0,17.0,25.0,34.0,42.0,
@@ -392,7 +392,7 @@ fn vec_to_dmat() {
 
 #[test]
 fn src_and_sat_same_size() {
-	let src: DMat<usize> = DMat::new_zeros(100,100);
+	let src: DMatrix<usize> = DMatrix::new_zeros(100,100);
 	let table = src.calculate_full_summed_area_table();
 	assert_eq!(src.nrows(), table.table.nrows());
 	assert_eq!(src.ncols(), table.table.ncols());
@@ -401,7 +401,7 @@ fn src_and_sat_same_size() {
 #[test]
 #[should_panic]
 fn bound_check_x() {
-	let src: DMat<usize> = DMat::new_zeros(50,100);
+	let src: DMatrix<usize> = DMatrix::new_zeros(50,100);
 	let table = src.calculate_full_summed_area_table();
 	table.get_sum((0,0),(50,99));
 }
@@ -409,7 +409,7 @@ fn bound_check_x() {
 #[test]
 #[should_panic]
 fn bound_check_y() {
-	let src: DMat<usize> = DMat::new_zeros(50,100);
+	let src: DMatrix<usize> = DMatrix::new_zeros(50,100);
 	let table = src.calculate_full_summed_area_table();
 	table.get_sum((0,0),(49,100));
 }
@@ -417,7 +417,7 @@ fn bound_check_y() {
 #[test]
 #[should_panic]
 fn point_order_check1() {
-	let src: DMat<usize> = DMat::new_zeros(50,100);
+	let src: DMatrix<usize> = DMatrix::new_zeros(50,100);
 	let table = src.calculate_full_summed_area_table();
 	table.get_sum((49,99),(48,98));
 }
@@ -425,7 +425,7 @@ fn point_order_check1() {
 #[test]
 #[should_panic]
 fn point_order_check2() {
-	let src: DMat<usize> = DMat::new_zeros(50,100);
+	let src: DMatrix<usize> = DMatrix::new_zeros(50,100);
 	let table = src.calculate_full_summed_area_table();
 	table.get_sum((49,99),(48,99));
 }
@@ -433,7 +433,7 @@ fn point_order_check2() {
 #[test]
 #[should_panic]
 fn point_order_check3() {
-	let src: DMat<usize> = DMat::new_zeros(50,100);
+	let src: DMatrix<usize> = DMatrix::new_zeros(50,100);
 	let table = src.calculate_full_summed_area_table();
 	table.get_sum((49,99),(49,98));
 }
